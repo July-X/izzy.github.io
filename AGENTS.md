@@ -52,7 +52,6 @@ source/_posts/
 ├── easy-word/          # 鸿蒙单词学习 App（4篇）
 ├── slg-go/             # SLG 百万在线服务器（4篇）
 ├── 技术博客写作计划.md
-├── 博客写作原则.md
 └── 你好，我是-Izzy.md
 ```
 
