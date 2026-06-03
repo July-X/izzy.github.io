@@ -14,6 +14,9 @@ aside: true
 
 一个 **15年+** 的老兵开发者，什么都见过，什么都能搞定。
 
+> 见了便做做了便放下了了有何不了,
+> 慧生于觉觉生于自在生生还是无生。
+
 ### 🏷️ 身份标签
 
 | 角色 | 描述 |
@@ -33,7 +36,7 @@ aside: true
 
 ### 🔧 技术栈
 
-```
+```shell
 后端:  Java / Go / Rust (主力)
 前端:  Vue / React / Electron / 鸿蒙 ArkUI
 工具:  Docker / CI/CD / Linux / Nginx
