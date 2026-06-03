@@ -156,7 +156,7 @@ navbar:
     标签: /tags/ || fas fa-tags
     分类: /categories/ || fas fa-folder-open
     关于: /about/ || fas fa-user
-
+    
 nav:
   # Navigation bar logo image
   logo: /img/logo.png
@@ -178,4 +178,8 @@ google_adsense:
   client: ca-pub-4951549986720325
   enable_page_level_ads: true
 
+
+inject:
+  head:
+    - <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4951549986720325" crossorigin="anonymous"></script>
 
