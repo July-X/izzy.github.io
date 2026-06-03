@@ -77,6 +77,9 @@ darkmode:
   end: # 22
 
 
+mermaid:
+  enable: true
+
 local_search:
   enable: false
 
