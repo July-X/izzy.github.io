@@ -12,7 +12,7 @@ language: zh-CN
 timezone: Asia/Shanghai
 
 # URL
-url: https://izzy.github.io
+url: https://july-x.github.io
 permalink: posts/:title/
 permalink_defaults:
 pretty_urls:
