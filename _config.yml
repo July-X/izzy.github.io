@@ -85,5 +85,5 @@ theme: butterfly
 # Deployment
 deploy:
   type: git
-  repo: https://github.com/July-X/izzy.github.io.git
+  repo: git@github.com:July-X/July-X.github.io.gitt
   branch: main
