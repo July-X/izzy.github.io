@@ -159,3 +159,10 @@ code_blocks:
 
 disable_top_img: true
 background: https://i.loli.net/2019/09/09/5oDRkWVKctx2b6A.png
+nav:
+  # Navigation bar logo image
+  logo: /img/logo.png
+  display_title: true
+  display_post_title: true
+  # Whether to fix navigation bar
+  fixed: true
