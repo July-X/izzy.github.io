@@ -51,11 +51,11 @@ AI:    LangChain / Agent / 多模态生成
 
 ### 📍 坐标
 
-🖥️ macOS (M5 Max, 48GB RAM)
+🖥️ macOS (Intel 2019)
 
 ### 🔗 链接
 
-- [GitHub](https://github.com/izzy) — 主要代码仓库
+- [GitHub](https://github.com/July-X) — 主要代码仓库
 
 ---
 
