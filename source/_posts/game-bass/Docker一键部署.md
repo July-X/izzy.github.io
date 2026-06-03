@@ -13,7 +13,7 @@ top_img: false
 
 <!-- more -->
 
-`game-baas` 的目标是 5 分钟部署。实现方式是 Docker 多阶段构建 + docker-compose 编排，一条命令启动完整的后端服务。
+`game-bass` 的目标是 5 分钟部署。实现方式是 Docker 多阶段构建 + docker-compose 编排，一条命令启动完整的后端服务。
 
 ## 多阶段构建：20MB 的最终镜像
 
@@ -73,7 +73,7 @@ services:
     environment:
       - REDIS_ADDR=redis:6379
       - REDIS_PASSWORD=baas-dev
-      - JWT_SECRET=game-baas-dev-secret
+      - JWT_SECRET=game-bass-dev-secret
       - SERVER_ADDR=:8080
     volumes:
       - ./dev.license.dat:/license.dat
@@ -129,7 +129,7 @@ Redis 先启动并通过健康检查，server 才启动。总启动时间约 5~1
 | 配置项 | 开发环境 | 生产环境 |
 |--------|----------|----------|
 | Redis 密码 | `baas-dev` | 强密码 |
-| JWT Secret | `game-baas-dev-secret` | 随机 64 字节 |
+| JWT Secret | `game-bass-dev-secret` | 随机 64 字节 |
 | 许可证 | `dev.license.dat` | 正式许可证 |
 | 端口 | `8080` | 反向代理后 `443` |
 | 日志级别 | `debug` | `info` |
@@ -141,7 +141,7 @@ Redis 先启动并通过健康检查，server 才启动。总启动时间约 5~1
 客户端通过 Godot SDK 连接：
 
 ```gdscript
-var game_baas = preload("res://addons/game-baas/game_baas.gd").new()
+var game_baas = preload("res://addons/game-bass/game_baas.gd").new()
 game_baas.connect_to_server("http://localhost:8080")
 
 # 匿名登录

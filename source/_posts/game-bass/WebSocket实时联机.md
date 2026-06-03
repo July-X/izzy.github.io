@@ -13,7 +13,7 @@ top_img: false
 
 <!-- more -->
 
-`game-baas` 的实时联机系统基于 `gorilla/websocket`，采用 **Hub 模式**管理房间和玩家连接。所有操作通过 channel 串行化到一个主事件循环中，避免并发竞态。
+`game-bass` 的实时联机系统基于 `gorilla/websocket`，采用 **Hub 模式**管理房间和玩家连接。所有操作通过 channel 串行化到一个主事件循环中，避免并发竞态。
 
 ## Hub 模式：中央事件循环
 
@@ -95,7 +95,7 @@ func (r *Room) Broadcast(msg []byte) {
 
 ## 权威 Match：服务端权威
 
-对于需要反作弊的对战场景，game-baas 提供了权威 Match 模式。服务端维护游戏状态，客户端只发送输入：
+对于需要反作弊的对战场景，game-bass 提供了权威 Match 模式。服务端维护游戏状态，客户端只发送输入：
 
 ```go
 type AuthoritativeMatch struct {

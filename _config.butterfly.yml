@@ -47,7 +47,7 @@ footer:
     enable: true
     since: 2025
   copyright: true
-  custom_text: <a href="https://july-x.github.io//">Powered By AI.<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4951549986720325" crossorigin="anonymous"/></a>
+  custom_text: <a href="https://july-x.github.io">Powered By AI.</a><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4951549986720325" crossorigin="anonymous"/>
 
 busuanzi:
   site_uv: false

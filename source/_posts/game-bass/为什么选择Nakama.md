@@ -13,13 +13,13 @@ top_img: false
 
 <!-- more -->
 
-`game-baas` 的定位很直接：面向 2-10 人独立游戏团队的游戏后端模板商店。买模板 5 分钟部署，Docker 一键启动，Godot SDK 即插即用。很多人问为什么不用 Nakama，答案是：**Nakama 太重了，而我们的目标用户不需要那么重的东西。**
+`game-bass` 的定位很直接：面向 2-10 人独立游戏团队的游戏后端模板商店。买模板 5 分钟部署，Docker 一键启动，Godot SDK 即插即用。很多人问为什么不用 Nakama，答案是：**Nakama 太重了，而我们的目标用户不需要那么重的东西。**
 
 ## Nakama 好在哪，重在哪
 
 Nakama 是 Heroic Labs 开源的游戏服务器框架，功能全面：认证、好友、排行榜、实时对战、存储、Lua 脚本、多语言 SDK。但对独立团队来说有几个痛点：
 
-| 痛点 | Nakama | game-baas |
+| 痛点 | Nakama | game-bass |
 |------|--------|-----------|
 | 数据库依赖 | PostgreSQL（必须） | 纯 Redis（零 SQL） |
 | 启动复杂度 | Docker Compose 多容器 | 单容器 + Redis |
@@ -29,7 +29,7 @@ Nakama 是 Heroic Labs 开源的游戏服务器框架，功能全面：认证、
 
 核心矛盾：Nakama 是为中大型游戏团队设计的，它的 PostgreSQL 依赖、复杂的模块系统、多语言 Runtime 对独立团队来说是负担而非能力。
 
-## game-baas 的架构选择
+## game-bass 的架构选择
 
 ### 纯 Redis 存储
 
@@ -93,10 +93,10 @@ func TenantFrom(ctx context.Context) *Tenant { ... }
 
 ## 配套 Godot SDK
 
-独立团队最缺的不是后端代码，是前后端联调的时间。game-baas 配套了 Godot 4.x SDK，开发者在 GDScript 里直接调用：
+独立团队最缺的不是后端代码，是前后端联调的时间。game-bass 配套了 Godot 4.x SDK，开发者在 GDScript 里直接调用：
 
 ```gdscript
-# addons/game-baas/game_baas.gd
+# addons/game-bass/game_baas.gd
 func leaderboard_submit(board: String, score: int) -> void:
     var result = await _http_post("/api/leaderboard/submit", {
         "board": board,
@@ -108,7 +108,7 @@ SDK 封装了 HTTP 请求、错误处理、WebSocket 连接管理，开发者不
 
 ## 商业模式：卖模板，不做 SaaS
 
-game-baas 不是 SaaS 平台，不托管服务器。商业模式是：
+game-bass 不是 SaaS 平台，不托管服务器。商业模式是：
 
 - **模板源码**（2000-5000 元/份）：买断制，拿到完整源码，自己部署
 - **定制开发**（2-5 万/项目）：基于模板做功能定制
@@ -117,7 +117,7 @@ game-baas 不是 SaaS 平台，不托管服务器。商业模式是：
 
 ## 和 Nakama 的关系
 
-game-baas 不是 Nakama 的竞品，是 Nakama 的"轻量替代方案"。适合的场景：
+game-bass 不是 Nakama 的竞品，是 Nakama 的"轻量替代方案"。适合的场景：
 
 - 2-10 人独立团队，没有专职后端工程师
 - 游戏类型是放置、卡牌、回合制等低实时性需求
