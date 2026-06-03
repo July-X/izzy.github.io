@@ -1,0 +1,115 @@
+# Butterfly 主题配置
+favicon: /img/favicon.svg
+
+avatar:
+  img: /img/avatar.svg
+  effect: false
+
+navbar:
+  logo_img: /img/logo.svg
+  menu:
+    首页: / || fas fa-home
+    归档: /archives/ || fas fa-archive
+    标签: /tags/ || fas fa-tags
+    分类: /categories/ || fas fa-folder-open
+    关于: /about/ || fas fa-user
+
+index_format: 1
+pagination_style: 2
+
+post_meta:
+  page:
+    date_type: both
+    date_format: YYYY-MM-DD
+    categories: true
+    tag: true
+  post:
+    date_type: both
+    date_format: YYYY-MM-DD
+    categories: true
+    tag: true
+
+post_copyright:
+  enable: false
+
+scrollbar:
+  enable: true
+  type: default
+
+highlight_theme: mac light
+highlight_copy: true
+highlight_lang: true
+highlight_shrink: false
+code_word_wrap: true
+
+default_top_img: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+archive_top_img: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+tag_top_img: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+category_top_img: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+
+# 文章底部分享按钮（已禁用）
+# share:
+#   use:
+
+footer:
+  owner:
+    enable: true
+    since: 2025
+  copyright: true
+
+busuanzi:
+  site_uv: false
+  site_pv: false
+  page_pv: false
+
+darkmode:
+  enable: true
+  button: true
+  default: dark
+
+local_search:
+  enable: false
+
+canvas_ribbon:
+  enable: true
+  size: 150
+  alpha: 0.6
+  zIndex: -1
+  click_change_move: true
+  mobile: false
+
+preloader:
+  enable: true
+
+aside:
+  enable: true
+  position: right
+  card_author:
+    enable: true
+    button:
+      icon: fab fa-github
+      text: Follow Me
+      link: https://github.com/izzy
+  card_announcement:
+    enable: true
+    content: "🎮 Game Dev · ⚡ AI · 🔧 Tech Explorer"
+  card_recent_post:
+    enable: true
+    limit: 5
+    sort: updated
+  card_categories:
+    enable: true
+    limit: 10
+  card_tags:
+    enable: true
+    limit: 20
+  card_archives:
+    enable: true
+    type: monthly
+    format: YYYY-MM
+    order: -1
+    limit: 8
+  card_webinfo:
+    enable: true
+    post_count: true
+    last_push_date_sort: first

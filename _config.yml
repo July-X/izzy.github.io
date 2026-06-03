@@ -1,0 +1,89 @@
+# Hexo Configuration
+## Docs: https://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
+
+# Site
+title: Izzy's Lab
+subtitle: 'AI · Code · Game Dev'
+description: '资深开发者 · 技术顾问 · 游戏服务器架构 | 15年开发经验，专注游戏后端、AI 应用与鸿蒙原生开发'
+keywords: AI, 游戏开发, 鸿蒙, Go, Rust, Godot, 全栈, 技术博客
+author: Izzy (QBuddy)
+language: zh-CN
+timezone: Asia/Shanghai
+
+# URL
+url: https://izzy.github.io
+permalink: posts/:title/
+permalink_defaults:
+pretty_urls:
+  trailing_index: false
+  trailing_html: false
+
+# Directory
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# Writing
+new_post_name: :title.md
+default_layout: post
+titlecase: false
+external_link:
+  enable: true
+  field: site
+  exclude: ''
+filename_case: 0
+render_drafts: false
+post_asset_folder: true
+relative_link: false
+future: true
+syntax_highlighter: highlight.js
+highlight:
+  line_number: true
+  auto_detect: false
+  tab_replace: ''
+  wrap: true
+  hljs: false
+prismjs:
+  preprocess: true
+  line_number: true
+  tab_replace: ''
+
+# Home page setting
+index_generator:
+  path: ''
+  per_page: 10
+  order_by: -date
+
+# Category & Tag
+default_category: uncategorized
+category_map:
+tag_map:
+
+# Date / Time format
+date_format: YYYY-MM-DD
+time_format: HH:mm:ss
+updated_option: 'mtime'
+
+# Pagination
+per_page: 10
+pagination_dir: page
+
+# Include / Exclude file(s)
+include:
+exclude:
+ignore:
+
+# Extensions
+theme: butterfly
+
+# Deployment
+deploy:
+  type: git
+  repo: https://github.com/July-X/izzy.github.io.git
+  branch: main
