@@ -16,7 +16,7 @@ top_img: false
 
 最终的解法是：**所有视觉素材全部用 GDScript 程序化生成**。整个 `SpriteFactory.gd` 文件 898 行，承担了传统项目里原画师 + 精灵图集 + 动画师的全部职责。
 
-```mermaid
+{% mermaid %}
 graph LR
     A[游戏启动] --> B[SpriteFactory 初始化]
     B --> C[生成玩家飞船]
@@ -28,7 +28,7 @@ graph LR
     E --> G
     F --> G
     G --> H[运行时直接引用 - 零开销]
-```
+{% endmermaid %}
 
 ## SpriteFactory：898 行代码画出整个游戏
 

@@ -17,7 +17,7 @@ top_img: false
 
 答案是两层状态机。
 
-```mermaid
+{% mermaid %}
 stateDiagram-v2
     [*] --> IDLE
     IDLE --> CIRCLE: 太远
@@ -31,7 +31,7 @@ stateDiagram-v2
     RETREAT --> ATTACK: 计时器到期
     IDLE --> ENRAGED: Phase3激活
     ENRAGED --> ATTACK: 复用逻辑
-```
+{% endmermaid %}
 
 ## 两层状态，各管各的
 
@@ -96,7 +96,7 @@ func _update_phase() -> void:
 
 阶段切换的血量阈值流程：
 
-```mermaid
+{% mermaid %}
 graph TD
     A[Boss 受伤] --> B{计算 hp_ratio}
     B -->|> 60%| C[Phase 1: 压制校准]
@@ -105,7 +105,7 @@ graph TD
     C -->|稳定射击| F[玩家学习节奏]
     D -->|攻击频率翻倍| G[压力陡增]
     E -->|释放补给碎片| H[生死线击杀]
-```
+{% endmermaid %}
 
 `_set_phase()` 不切换行为状态，只修改参数字典——射击间隔、移动速度、弹幕模式。行为状态机继续独立运转，但每个 tick 函数读取的参数已经变了。
 
