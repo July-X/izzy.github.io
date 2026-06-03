@@ -93,7 +93,7 @@ aside:
     button:
       icon: fab fa-github
       text: Follow Me
-      link: https://github.com/izzy
+      link: https://github.com/July-X
   card_announcement:
     enable: true
     content: "🎮 Game Dev · ⚡ AI · 🔧 Tech Explorer"
