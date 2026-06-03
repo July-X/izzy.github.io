@@ -91,16 +91,16 @@ local_search:
   enable: false
 
 canvas_ribbon:
-  enable: false
+  enable: true
   size: 150
   alpha: 0.6
   zIndex: -1
   click_change_move: true
   mobile: false
 
-canvas_fluttering_ribbon:
-  enable: true
-  mobile: false # false 手機端不顯示 true 手機端顯示
+# canvas_fluttering_ribbon:
+#   enable: true
+#   mobile: false # false 手機端不顯示 true 手機端顯示
 
 # 點擊出現愛心
 click_heart:
