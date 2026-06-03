@@ -80,12 +80,12 @@ darkmode:
 # https://github.com/mermaid-js/mermaid
 mermaid:
   enable: true
-  # Write Mermaid diagrams using code blocks
-  code_write: true
-  # built-in themes: default / forest / dark / neutral
+  code_write: false
   theme:
     light: default
     dark: dark
+  open_in_new_tab: true
+  zoom_pan: true
 
 local_search:
   enable: false
