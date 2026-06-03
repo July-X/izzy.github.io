@@ -47,9 +47,13 @@ archive_top_img: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
 tag_top_img: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
 category_top_img: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
 
-# 文章底部分享按钮（已禁用）
-# share:
-#   use:
+# 文章底部分享按钮（仅微信、QQ）
+share:
+  use: sharejs
+  sharejs:
+    sites: wechat,qq
+  addtoany:
+    item:
 
 footer:
   owner:
