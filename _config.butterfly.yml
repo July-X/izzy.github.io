@@ -47,7 +47,7 @@ footer:
     enable: true
     since: 2025
   copyright: true
-  custom_text: <a href="https://july-x.github.io">Powered By AI.</a><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4951549986720325" crossorigin="anonymous"/>
+  custom_text: <a href="https://july-x.github.io">Powered By AI.</a>
 
 busuanzi:
   site_uv: false
@@ -156,7 +156,7 @@ navbar:
     标签: /tags/ || fas fa-tags
     分类: /categories/ || fas fa-folder-open
     关于: /about/ || fas fa-user
-    
+
 nav:
   # Navigation bar logo image
   logo: /img/logo.png
