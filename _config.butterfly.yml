@@ -1,12 +1,12 @@
 # Butterfly 主题配置
-favicon: /img/favicon.svg
+favicon: /img/favicon.png
 
 avatar:
-  img: /img/avatar.svg
+  img: /img/avatar.png
   effect: false
 
 navbar:
-  logo_img: /img/logo.svg
+  logo_img: /img/logo.png
   menu:
     首页: / || fas fa-home
     归档: /archives/ || fas fa-archive
@@ -14,7 +14,7 @@ navbar:
     分类: /categories/ || fas fa-folder-open
     关于: /about/ || fas fa-user
 
-index_format: 1
+index_format: 3
 pagination_style: 2
 
 post_meta:
