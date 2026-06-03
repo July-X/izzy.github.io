@@ -147,6 +147,7 @@ code_blocks:
 
 disable_top_img: true
 background: https://i.loli.net/2019/09/09/5oDRkWVKctx2b6A.png
+
 nav:
   # Navigation bar logo image
   logo: /img/logo.png
@@ -154,12 +155,12 @@ nav:
   display_post_title: true
   # Whether to fix navigation bar
   fixed: true
-menu:
-  首页: / || fas fa-home
-  归档: /archives/ || fas fa-archive
-  标签: /tags/ || fas fa-tags
-  分类: /categories/ || fas fa-folder-open
-  关于: /about/ || fas fa-user
+  menu:
+    首页: / || fas fa-home
+    归档: /archives/ || fas fa-archive
+    标签: /tags/ || fas fa-tags
+    分类: /categories/ || fas fa-folder-open
+    关于: /about/ || fas fa-user
 
 google_adsense:
   enable: true
