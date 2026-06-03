@@ -66,12 +66,16 @@ busuanzi:
   site_pv: false
   page_pv: false
 
+# dark mode
 darkmode:
   enable: true
+  # dark mode和 light mode切换按钮
   button: true
-  default: dark
+  autoChangeMode: false
+  # Set the light mode time. The value is between 0 and 24. If not set, the default value is 6 and 18
+  start: # 8
+  end: # 22
 
-display_mode: dark
 
 local_search:
   enable: false
@@ -92,7 +96,7 @@ canvas_fluttering_ribbon:
 click_heart:
   enable: true
   mobile: false
-  
+
 preloader:
   enable: true
 
