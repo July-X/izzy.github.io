@@ -14,7 +14,7 @@ top_img: false
 
 做独立游戏最头疼的往往不是代码，是美术。`godot-game-one` 项目一开始也卡在这里——没有美术资源，没有美术师，只有代码。
 
-最终的解法是：**所有视觉素材全部用 GDScript 程序化生成**。整个 `SpriteFactory.gd` 文件 898 行，承担了传统项目里原画师 + 精灵图集 + 动画师的全部职责。
+最终的解法是：**所有视觉素材全部用 GDScript 程序化生成**。整个 `sprite_factory.gd` 文件 898 行，承担了传统项目里原画师 + 精灵图集 + 动画师的全部职责。
 
 {% mermaid %}
 graph LR
@@ -44,7 +44,17 @@ graph LR
 核心原理是 Godot 的 `Image.set_pixel()` API。以玩家飞船为例：
 
 ```python
+# sprite_factory.gd
 func create_player_sprite(level: int = 1) -> ImageTexture:
+    var clamped_level: int = maxi(level, 1)
+    # 优先加载预制 PNG，不存在才走程序化生成
+    var variant_png := _load_png("player/variants/lv%02d.png" % clamped_level)
+    if variant_png:
+        return variant_png
+    var png := _load_png("player/base.png")
+    if png:
+        return png
+
     var w: int = 64 + level * 8
     var h: int = 96 + level * 8
     var img := Image.create(w, h, false, Image.FORMAT_RGBA8)
@@ -57,22 +67,26 @@ func create_player_sprite(level: int = 1) -> ImageTexture:
     var body_g: float = 0.30 + level * 0.06
     var body_b: float = 0.75 - level * 0.02
 
-    # 逐像素绘制：机身 → 机翼 → 驾驶舱 → 引擎喷口
-    for y in range(20, 70):
-        for x in range(cx - 12, cx + 12):
-            img.set_pixel(x, y, Color(body_r, body_g, body_b))
+    # 逐像素绘制：尾翼 → 机身 → 机翼 → 驾驶舱 → 引擎喷口
+    for y in range(12, 24):
+        for x in range(cx - 6, cx + 6):
+            # ...
 ```
 
-Boss 的 5 种配色通过一个字典管理，切换变体只需改 key：
+Boss 的 5 种配色通过 `match` 分支管理（每种有 `hull_col`、`stripe_col`、`glow_col` 三色），切换变体只需改 `variant_id`：
 
 ```python
-var _boss_colors := {
-    "boss_01": {"body": Color(0.05, 0.08, 0.25), "stripe": Color(0.8, 0.1, 0.1)},
-    "boss_02": {"body": Color(0.15, 0.15, 0.15), "stripe": Color(0.9, 0.5, 0.1)},
-    "boss_03": {"body": Color(0.05, 0.20, 0.22), "stripe": Color(0.2, 0.5, 0.9)},
-    "boss_04": {"body": Color(0.15, 0.05, 0.20), "stripe": Color(0.9, 0.1, 0.6)},
-    "boss_05": {"body": Color(0.12, 0.12, 0.12), "stripe": Color(0.9, 0.8, 0.2)},
-}
+# sprite_factory.gd
+match (id - 1) % 5:
+    0:
+        hull_col = Color(0.24, 0.32, 0.42, 1.0)
+        stripe_col = Color(0.85, 0.2, 0.2, 1.0)
+        glow_col = Color(0.45, 0.85, 1.0, 1.0)
+    1:
+        hull_col = Color(0.28, 0.28, 0.36, 1.0)
+        stripe_col = Color(0.95, 0.55, 0.1, 1.0)
+        glow_col = Color(0.3, 1.0, 0.8, 1.0)
+    # ... 共 5 种配色
 ```
 
 所有素材在游戏启动时一次性生成，缓存为 `ImageTexture`，后续直接引用，运行时零开销。

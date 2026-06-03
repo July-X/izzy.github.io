@@ -86,34 +86,45 @@ else:
 阶段切换的实现极其简洁：
 
 ```python
-func _update_phase() -> void:
-    var hp_ratio = float(current_hp) / float(max_hp)
-    if hp_ratio <= 0.3:
-        _set_phase(BossPhase.OVERLOAD)
-    elif hp_ratio <= 0.6:
-        _set_phase(BossPhase.RIFT)
+# boss.gd
+func _update_phase_from_health(emit_event: bool) -> void:
+    var ratio: float = _health / max(_max_health, 1.0)
+    var next_phase: int = BossPhase.SUPPRESSION
+    if ratio <= 0.35:
+        next_phase = BossPhase.OVERLOAD
+    elif ratio <= 0.70:
+        next_phase = BossPhase.RIFT
+    if next_phase == _phase:
+        return
+    _phase = next_phase
+    _apply_phase_sprite(_phase)
+    _circle_radius = 300.0
+    if _phase == BossPhase.RIFT:
+        _circle_radius = 250.0
+    elif _phase == BossPhase.OVERLOAD:
+        _circle_radius = 210.0
 ```
 
 阶段切换的血量阈值流程：
 
 {% mermaid %}
 graph TD
-    A["Boss 受伤"] --> B{"计算 hp_ratio"}
-    B -->|"大于 60%"| C["Phase 1 压制校准"]
-    B -->|"30%-60%"| D["Phase 2 裂隙展开"]
-    B -->|"小于 30%"| E["Phase 3 核心过载"]
+    A["Boss 受伤"] --> B{"计算 ratio"}
+    B -->|"大于 70%"| C["Phase 1 压制校准"]
+    B -->|"35%-70%"| D["Phase 2 裂隙展开"]
+    B -->|"小于 35%"| E["Phase 3 核心过载"]
     C -->|"稳定射击"| F["玩家学习节奏"]
     D -->|"攻击频率翻倍"| G["压力陡增"]
     E -->|"释放补给碎片"| H["生死线击杀"]
 {% endmermaid %}
 
-`_set_phase()` 不切换行为状态，只修改参数字典——射击间隔、移动速度、弹幕模式。行为状态机继续独立运转，但每个 tick 函数读取的参数已经变了。
+`_update_phase_from_health()` 不切换行为状态，只修改阶段（`_phase`）、`_circle_radius` 等参数。行为状态机继续独立运转，但每个 tick 函数读取的参数已经变了。
 
 ## 这个设计的好处
 
 1. **解耦**：移动逻辑和战斗节奏完全分离，改阶段参数不影响行为状态，改行为状态不影响阶段节奏。
 2. **可读**：914 行的单一脚本，但因为分层清晰，定位问题很快——"Boss 攻击太慢"改阶段参数，"Boss 走位太死板"改行为状态权重。
-3. **可扩展**：加新阶段只需要加一个 enum 值 + 一段 `_set_phase` 参数配置 + 一段血量阈值判断。精英怪（Elite）复用了同样的架构，但只有两个阶段（压制→裂隙），实现只需 267 行。
+3. **可扩展**：加新阶段只需要加一个 enum 值 + 一段 `_set_phase` 参数配置 + 一段血量阈值判断。精英怪（Elite）复用了类似的隐式阶段判定架构（护盾值 + 血量比例 + 计时器），但有四个阶段，实现用了 509 行。
 
 ## 局限
 
