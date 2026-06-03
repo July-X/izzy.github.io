@@ -13,31 +13,75 @@ top_img: false
 
 <!-- more -->
 
-`game-bass` 的定位很直接：面向 2-10 人独立游戏团队的游戏后端模板商店。买模板 5 分钟部署，Docker 一键启动，Godot SDK 即插即用。很多人问为什么不用 Nakama，答案是：**Nakama 太重了，而我们的目标用户不需要那么重的东西。**
+说实话，最开始我是想用 Nakama 的。
 
-## Nakama 好在哪，重在哪
+Nakama 功能确实全——认证、好友、排行榜、实时对战、存储、Lua 脚本、多语言 SDK，该有的都有。但当我真的拿它给一个 3 人独立团队做原型时，光配 PostgreSQL + Docker Compose 就花了大半天。团队里没有专职后端，每次改个字段都要跑迁移脚本，Debug 的时候要翻三套日志。
 
-Nakama 是 Heroic Labs 开源的游戏服务器框架，功能全面：认证、好友、排行榜、实时对战、存储、Lua 脚本、多语言 SDK。但对独立团队来说有几个痛点：
+那一刻我意识到：**Nakama 解决的问题规模和这个团队面对的问题规模不匹配。**
 
-| 痛点 | Nakama | game-bass |
-|------|--------|-----------|
-| 数据库依赖 | PostgreSQL（必须） | 纯 Redis（零 SQL） |
-| 启动复杂度 | Docker Compose 多容器 | 单容器 + Redis |
-| 学习成本 | Go + Lua + 自定义模块 | Go + Lua，接口更少 |
-| 运维门槛 | PostgreSQL 备份/迁移/调优 | Redis AOF，一行配置 |
-| 源码可控 | 上游不稳定的 breaking change | 自有代码，完全可控 |
+---
 
-核心矛盾：Nakama 是为中大型游戏团队设计的，它的 PostgreSQL 依赖、复杂的模块系统、多语言 Runtime 对独立团队来说是负担而非能力。
+## 一个真实的踩坑经历
 
-## game-bass 的架构选择
+当时的情况是这样的：
 
-### 纯 Redis 存储
+> 团队要做一个放置类小游戏，需要排行榜、好友、简单的实时聊天。3 个人，一个策划一个美术一个程序，程序还是客户端转的，后端经验约等于零。
 
-所有数据（玩家、排行榜、好友、聊天记录）都存在 Redis 里。不用 SQL 数据库，不用 ORM，不用迁移脚本。
+我推荐了 Nakama。然后：
+
+**第 1 天**：Docker Compose 起服务，PostgreSQL 初始化，配了半天网络。程序小哥问我"为什么不用 MySQL"，我说 Nakama 要求用 PG。他说"那我本地没装 PG 怎么办"。
+
+**第 3 天**：排行榜跑通了，但自定义字段要写 Lua 模块。小哥第一次写 Lua，语法倒是简单，但调试手段约等于零——`print` 大法，加 `log.Info` 看日志。
+
+**第 7 天**：上游 Nakama 更新了一个 breaking change，我们的自定义模块编译不过了。花了一天查文档、看 changelog、改代码。
+
+**第 10 天**：项目暂停，小哥说"我还是先把客户端做好吧，后端等有专职的人再说"。
+
+这个经历让我开始想：**有没有一种方案，让没有后端经验的人也能 5 分钟跑起来？**
+
+---
+
+## 选型对比：不是 Nakama 不好，是不适合
+
+我把几个候选方案做了个对比：
+
+```
+              复杂度    功能完整度    学习成本    运维成本
+Nakama        ★★★★★    ★★★★★        ★★★★      ★★★★★
+自研(Express) ★★       ★★            ★★        ★★
+自研(Go+Redis) ★★★     ★★★★          ★★★       ★★
+```
+
+Nakama 功能最全，但复杂度和运维成本也最高。自研 Express 最简单，但功能不够。Go + Redis 是个折中点——功能够用，复杂度可控，运维简单。
+
+最终选了 Go + Redis，原因是：
+
+**1. 部署简单**。Redis 一行命令就起，Go 编译成单个二进制。Docker 镜像 20MB，`scp` 到服务器就能跑。对比 Nakama 的 PostgreSQL + 多容器编排，省了一半的运维心智。
+
+**2. 学习曲线平**。Go 的语法简单，标准库够用。不用学 ORM，不用写迁移脚本，Redis 的数据结构（Hash、Sorted Set、List）天然覆盖排行榜、好友、聊天的存储需求。
+
+**3. 源码可控**。这一点很多人忽略。Nakama 上游的 breaking change 我踩过坑，不想再踩第二次。自有代码意味着改什么、什么时候改，完全自己说了算。
+
+---
+
+## 纯 Redis 存储：省掉了什么？
+
+不用 PostgreSQL 意味着省掉了：
+- ORM 配置
+- 数据库迁移脚本
+- 备份策略设计（Redis AOF 一行配置）
+- 连接池调优
+- SQL 查询优化
+
+代价是：
+- 没有复杂查询能力（不能 `JOIN`、不能 `GROUP BY`）
+- 数据量有上限（单机 Redis 内存限制）
+- 没有事务保证（Redis 事务和 SQL 事务不是一个东西）
+
+对于 2-10 人团队的独立游戏来说，这些代价完全可以接受。排行榜用 Sorted Set，好友关系用 Set，聊天记录用 List，KV 存储用 Hash。一个 Redis 实例搞定一切。
 
 ```go
-// internal/leaderboard/leaderboard.go
-// 排行榜用 Redis Sorted Set，天然有序
+// 排行榜：一行代码提交分数
 func (s *Service) Submit(ctx context.Context, board string, score int64) error {
     key := fmt.Sprintf("lb:%s:%s", tenantID, board)
     return s.rdb.ZAdd(ctx, key, redis.Z{
@@ -45,83 +89,57 @@ func (s *Service) Submit(ctx context.Context, board string, score int64) error {
         Member: playerID,
     }).Err()
 }
+
+// 查询 Top 10：一行代码
+func (s *Service) TopN(ctx context.Context, board string, n int64) ([]redis.Z, error) {
+    key := fmt.Sprintf("lb:%s:%s", tenantID, board)
+    return s.rdb.ZRevRangeWithScores(ctx, key, 0, n-1).Result()
+}
 ```
 
-Redis Sorted Set 天然支持排行查询（`ZREVRANGE`）、分数更新（`ZINCRBY`）、范围查询（`ZRANGEBYSCORE`），一个数据结构覆盖排行榜的全部需求。
+对比 Nakama 的排行榜模块，代码量少了 10 倍。不是因为我们写得更好，是因为 Redis Sorted Set 天然就是为排行设计的。
 
-### Go 语言的务实选择
-
-Go 不是"最优雅"的语言，但对游戏后端来说是最务实的：
-
-1. **编译成单个二进制**：Docker 镜像只有 ~20MB，部署只需 `scp` 一个文件
-2. **goroutine 天然适合并发**：每个 WebSocket 连接一个 goroutine，比 Node.js 的事件循环更直观
-3. **标准库足够强**：HTTP、JSON、加密、模板都在标准库里，不需要第三方依赖
-4. **交叉编译简单**：`GOOS=linux GOARCH=amd64 go build` 一行出 Linux 二进制
-
-### 模块化但不过度
-
-{% mermaid %}
-graph TD
-    A["cmd/server"] --> B["router"]
-    B --> C["auth"]
-    B --> D["player"]
-    B --> E["leaderboard"]
-    B --> F["chat"]
-    B --> G["competitive"]
-    B --> H["idle"]
-    B --> I["realtime"]
-    C --> J["Redis"]
-    D --> J
-    E --> J
-    F --> J
-    I --> K["WebSocket"]
-{% endmermaid %}
-
-每个模块是 `internal/` 下的一个 Go 包，通过 `router/` 统一注册 HTTP 端点。模块之间不互相依赖，只通过 `core/` 包定义的接口通信。
-
-```go
-// core/core.go — 定义 Handler 签名
-type Handler func(ctx context.Context, p *Payload) (interface{}, error)
-
-// Tenant/Player context 注入
-type ctxKey struct{}
-func WithTenant(ctx context.Context, t *Tenant) context.Context { ... }
-func TenantFrom(ctx context.Context) *Tenant { ... }
-```
-
-15+ 个 API 端点，每个端点一个 Handler 函数，没有中间件链、没有 DI 框架、没有代码生成。
+---
 
 ## 配套 Godot SDK
 
-独立团队最缺的不是后端代码，是前后端联调的时间。game-bass 配套了 Godot 4.x SDK，开发者在 GDScript 里直接调用：
+后端再简单，客户端调不通也是白搭。game-bass 配套了 Godot 4.x SDK，封装了 HTTP 请求、错误处理、WebSocket 连接管理：
 
 ```gdscript
-# addons/game-bass/game_baas.gd
-func leaderboard_submit(board: String, score: int) -> void:
-    var result = await _http_post("/api/leaderboard/submit", {
-        "board": board,
-        "score": score
-    })
+# 5 行代码完成排行榜功能
+var game_bass = preload("res://addons/game-bass/game_bass.gd").new()
+game_bass.connect_to_server("http://localhost:8080")
+await game_bass.auth_anonymous()
+await game_bass.leaderboard_submit("daily", 1500)
+var top10 = await game_bass.leaderboard_top("daily", 10)
 ```
 
-SDK 封装了 HTTP 请求、错误处理、WebSocket 连接管理，开发者不需要理解后端 API 细节。
+这个 SDK 的设计原则是：**客户端开发者不需要理解后端 API 细节**。调用一个函数，拿到结果，完事。
+
+---
 
 ## 商业模式：卖模板，不做 SaaS
 
-game-bass 不是 SaaS 平台，不托管服务器。商业模式是：
+game-bass 不是 SaaS 平台，不托管服务器。商业模式很简单：
 
 - **模板源码**（2000-5000 元/份）：买断制，拿到完整源码，自己部署
 - **定制开发**（2-5 万/项目）：基于模板做功能定制
 
-这个模式的好处：用户有完全的代码控制权，不会因为平台关停而丢失后端。
+为什么不做成 SaaS？因为独立团队最怕的就是依赖第三方平台。平台一关停，后端就没了。买断源码的好处是：**代码在你手里，跑在你服务器上，谁也关不掉。**
 
-## 和 Nakama 的关系
+---
 
-game-bass 不是 Nakama 的竞品，是 Nakama 的"轻量替代方案"。适合的场景：
+## 什么时候该用 Nakama？
 
-- 2-10 人独立团队，没有专职后端工程师
-- 游戏类型是放置、卡牌、回合制等低实时性需求
-- 需要快速原型验证，不想花 2 周配置 PostgreSQL
-- 预算有限，买不起商业游戏后端服务
+game-bass 不是万能的。以下场景建议直接用 Nakama：
 
-> 做技术选型不是选"最好的"，是选"最匹配当前阶段的"。Nakama 很好，但它解决的问题规模和独立团队面对的问题规模不匹配。
+- 团队有专职后端工程师
+- 需要复杂的实时对战（如 MOBA、FPS）
+- 需要多语言 SDK（Unity、Unreal、Cocos）
+- 项目规模大，需要 PostgreSQL 的复杂查询能力
+
+game-bass 适合的场景是：小团队、低实时性需求（放置、卡牌、回合制）、快速原型验证、预算有限。
+
+---
+
+> 这篇文章不是在说 Nakama 不好。Nakama 是一个很成熟的框架，但它解决的问题规模和 2-10 人独立团队面对的问题规模不匹配。做技术选型，匹配比"最好"更重要。
