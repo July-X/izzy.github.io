@@ -43,7 +43,7 @@ graph LR
 
 核心原理是 Godot 的 `Image.set_pixel()` API。以玩家飞船为例：
 
-```gdscript
+```python
 func create_player_sprite(level: int = 1) -> ImageTexture:
     var w: int = 64 + level * 8
     var h: int = 96 + level * 8
@@ -65,7 +65,7 @@ func create_player_sprite(level: int = 1) -> ImageTexture:
 
 Boss 的 5 种配色通过一个字典管理，切换变体只需改 key：
 
-```gdscript
+```python
 var _boss_colors := {
     "boss_01": {"body": Color(0.05, 0.08, 0.25), "stripe": Color(0.8, 0.1, 0.1)},
     "boss_02": {"body": Color(0.15, 0.15, 0.15), "stripe": Color(0.9, 0.5, 0.1)},
