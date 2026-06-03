@@ -171,6 +171,6 @@ google_adsense:
 
 
 inject:
-  head:
+  bottom:
     - <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4951549986720325" crossorigin="anonymous"></script>
 
