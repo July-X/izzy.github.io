@@ -92,5 +92,5 @@ git add -A && git commit -m "feat: ..." && git push origin main
 1. 使用 subagent 探索源码项目，收集关键代码片段
 2. 验证代码片段的真实性（必须能从项目中找到）
 3. 撰写博文（遵循写作原则）
-4. 更新技术博客写作计划
+4. 更新 `source/_posts/技术博客写作计划.md`：新增的独立计划模块放到"前言"下方
 5. git add + commit + push

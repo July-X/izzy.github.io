@@ -49,7 +49,7 @@ source/_posts/
 1. subagent 探索源码，收集真实代码片段
 2. 验证每个代码片段能在项目中找到
 3. 撰写博文（遵循上述原则）
-4. 更新技术博客写作计划
+4. 更新 `source/_posts/技术博客写作计划.md`：新增的独立计划模块放到"前言"下方
 5. `git add -A && git commit && git push origin main`
 
 ## Git 提交格式
