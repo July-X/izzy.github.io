@@ -12,7 +12,7 @@ aside: true
 
 ## 👋 你好，我是 Izzy
 
-一个 **15年+** 的老兵开发者，什么都见过，什么都能搞定。
+一个 **15年+** 的老兵开发者，用最合适的成本解决你所遇到的问题。
 
 > 见了便做做了便放下了了有何不了,
 > 慧生于觉觉生于自在生生还是无生。
@@ -37,8 +37,8 @@ aside: true
 ### 🔧 技术栈
 
 ```shell
-后端:  Java / Go / Rust (主力)
-前端:  Vue / React / Electron / 鸿蒙 ArkUI
+后端:  Java / Nodejs / Python / Rust / Go (主)
+前端:  Vue / Electron / 鸿蒙 ArkUI
 工具:  Docker / CI/CD / Linux / Nginx
 AI:    LangChain / Agent / 多模态生成
 游戏:  Godot 4.x / Unity / 自研引擎
@@ -53,8 +53,8 @@ AI:    LangChain / Agent / 多模态生成
 <div style="flex-shrink: 0; width: 280px; background: var(--card-bg); border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
 
 ### 📍 坐标
-
-🖥️ macOS (Intel 2019)
+🗺️ 四川·成都
+🖥️ MBP (Intel 2019)
 
 ### 🔗 链接
 
