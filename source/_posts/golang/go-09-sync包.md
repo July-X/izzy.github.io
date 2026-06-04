@@ -1,6 +1,6 @@
 ---
 title: Go 并发进阶（中）：sync 包深挖
-date: 2025-06-04
+date: 2026-06-04
 categories:
   - [Golang学习]
 tags:

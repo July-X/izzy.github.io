@@ -1,6 +1,6 @@
 ---
 title: Go 工程实践（上）：Error 处理最佳实践
-date: 2025-06-04
+date: 2026-06-04
 categories:
   - [Golang学习]
 tags:

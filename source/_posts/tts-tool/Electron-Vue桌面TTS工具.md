@@ -1,6 +1,6 @@
 ---
 title: "Electron + Vue 搭建桌面 TTS 工具的技术选型"
-date: 2025-06-03 21:30:00
+date: 2026-06-03 21:30:00
 tags:
   - Electron
   - Vue
