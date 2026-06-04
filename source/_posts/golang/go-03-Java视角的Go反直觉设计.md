@@ -7,7 +7,7 @@ tags:
   - 并发编程
   - 指针
   - Context
-categories: Golang 学习
+categories: Golang学习
 ---
 
 > 第一篇聊了基础语法，第二篇从代码审查里踩了 40+ 个坑。这一篇换个角度——**从你熟悉的 Java 出发，看 Go 那些让人第一反应"这不对吧"的设计**。这些内容来自我和 AI 在开发 slg-go 项目时的真实对话。
