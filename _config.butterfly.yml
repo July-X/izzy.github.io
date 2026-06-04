@@ -97,11 +97,11 @@ aside:
     enable: true
     button:
       icon: fab fa-github
-      text: Follow Me
+      text: ❤️Follow Me
       link: https://github.com/July-X
   card_announcement:
     enable: true
-    content: "🎮 <b>Game Dev</b> · ⚡ AI · 🔧 Tech Explorer</br>😊见了便做做了便放下了了有何不了"
+    content: "🎮 <b>Game Dev</b> · ⚡ 🔧AI · </br>😊见了便做做了便放下了了有何不了"
   card_recent_post:
     enable: true
     limit: 5
