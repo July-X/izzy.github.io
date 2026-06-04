@@ -49,11 +49,6 @@ footer:
   copyright: true
   custom_text: <a href="https://july-x.github.io">Powered By AI.</a>
 
-busuanzi:
-  site_uv: false
-  site_pv: false
-  page_pv: false
-
 # dark mode
 darkmode:
   enable: true
@@ -94,9 +89,6 @@ canvas_ribbon:
 click_heart:
   enable: true
   mobile: false
-
-preloader:
-  enable: true
 
 aside:
   enable: true
@@ -173,4 +165,45 @@ menu:
 inject:
   bottom:
     - <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4951549986720325" crossorigin="anonymous"></script>
+
+cover:
+  # 是否显示文章封面
+  index_enable: true
+  aside_enable: true
+  archives_enable: true
+  default_cover:
+# Need to install the hexo-wordcount plugin
+wordcount:
+  enable: true
+  # Display the word count of the article in post meta
+  post_wordcount: true
+  # Display the time to read the article in post meta
+  min2read: true
+  # Display the total word count of the website in aside's webinfo
+  total_wordcount: true
+
+busuanzi:
+  site_uv: true
+  site_pv: true
+  page_pv: true
+# Add a mask to the header and footer
+mask:
+  header: true
+  footer: true
+# 加载动画 Loading Animation
+preloader:
+  enable: true
+  # source
+  # 1. fullpage-loading
+  # 2. pace (progress bar)
+  source: 1
+  # pace theme (see https://codebyzach.github.io/pace/)
+  pace_css_url:
+  
+# 美化页面显示
+beautify:
+  enable: true
+  field: site # site/post
+  title-prefix-icon: '\f0c1'
+  title-prefix-icon-color: '#F47466'
 
