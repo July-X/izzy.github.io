@@ -200,3 +200,14 @@ func validateScript(script string) error {
 3. 升级到 LuaJIT（需要 CGO，和交叉编译冲突）
 
 > 目前 Lua 在项目里是"锦上添花"的角色——Rust 做主力，Lua 做兜底。这个定位决定了热更新暂时不是刚需。但随着脚本化的逻辑越来越多，热更新迟早要做。
+
+---
+
+## 更新记录
+
+**2025-06-04**：战斗脚本热更新已落地，详见 [从重启到热更：战斗脚本在线更新的三道防线](/slg-go/战斗脚本热更新实战)。
+
+- ~~目前还没有实现运行时热更新——改脚本还是得重启服务~~（热更新已实现，支持版本管理、审计日志、一键回滚）
+- ~~热更新：还没做，但可以聊聊怎么设计~~（实际实现见新博文，HTTP API + scriptMu 写锁保护）
+- ~~`/api/admin/reload` 接口~~（实际接口为 `POST /battle/script/reload`，由 Scheduler 注册）
+- ~~VM 池 + 引用计数的设计思路~~（实际方案更简洁：scriptMu 写锁保护 scriptCurrent 指针切换，LState 池用 sync.Pool 复用）
