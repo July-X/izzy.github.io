@@ -22,24 +22,24 @@ top_img: false
 
 ## 不是"从哪个版本开始有"这么简单
 
-UE5 的分布式编译方案，其实有三代：
+UE5 的分布式编译方案，其实有三代。以下时间线基于 UE 5.7 的视角回溯：
 
 ```
-                  UE4.5         UE4.20        UE 5.2
-                    │              │              │
-XGE/IncrediBuild ───┤──────────────┤──────────────┤────→ 需要商业 License
-                    │              │              │
-FASTBuild ──────────┼──────────────┤──────────────┤────→ 开源免费，轻量
-                    │              │              │
-Horde ──────────────┼──────────────┼──────────────┤────→ Epic 原生全栈
-                                    (内部使用)    (5.2 对外公开)
+                  UE4.5         UE4.20        UE 5.2         UE 5.7
+                    │              │              │              │
+XGE/IncrediBuild ───┤──────────────┤──────────────┤──────────────┤─→ 商业 License，已边缘化
+                    │              │              │              │
+FASTBuild ──────────┼──────────────┤──────────────┤──────────────┤─→ 开源免费，轻量但有限
+                    │              │              │              │
+Horde ──────────────┼──────────────┼──────────────┤──────────────┤─→ Epic 原生全栈
+                                    (内部使用)    (5.2 对外公开)  (5.7 成熟稳定)
 ```
 
 XGE 最早，但需要买 IncrediBuild License，Epic 自己都不主推了。
 
-FASTBuild 从 UE4.20 就有了，开源免费，UE5 一直支持。配置简单——一个 XML 文件加一个网络共享目录，半小时能搭完。
+FASTBuild 从 UE4.20 就有了，开源免费，UE5.7 一直支持。配置简单——一个 XML 文件加一个网络共享目录，半小时能搭完。
 
-Horde 是 Epic 内部跑 Fortnite 产线的方案，UE 5.2 起才对外公开。它是完整的构建编排系统，不只是编译分发，还管 Cook、Pak、Stage、Archive、测试，外加 Dashboard、Artifact 管理、Agent 池弹性伸缩。
+Horde 是 Epic 内部跑 Fortnite 产线的方案，UE 5.2 起对外公开。到了 UE 5.7，Horde 已经成为 Epic 官方推荐的 CI/CD 方案——Dashboard 大幅改进、Linux Agent 稳定可用、Zen Server 原生集成、API v2 固化。它不是实验性功能，是 Epic 产线上每天跑几千个 Job 的成熟系统。
 
 所以"从哪个版本开始"的答案取决于你问的是哪个方案：FASTBuild 从 UE4.20，Horde 从 UE 5.2。
 
@@ -65,11 +65,11 @@ Horde 是 Epic 内部跑 Fortnite 产线的方案，UE 5.2 起才对外公开。
 
 但 FASTBuild 有硬伤——只做 C++ 编译分发，Cook 和 Pak 不在它的职责范围内。而且 worker 基本只支持 Windows。
 
-## Horde：工业化流水线
+## Horde：UE 5.7 的工业化流水线
 
 如果你的团队 10 人以上、需要自动化 CI 流水线、或者需要 Mac/Linux 多平台同时构建，Horde 是正解。
 
-Horde 分三层：Server（ASP.NET Core + MongoDB）、Agent（每台 build 机器）、BuildGraph 脚本（XML 定义流水线）。架构长这样：
+Horde 分三层：Server（ASP.NET Core + MongoDB 7.0+）、Agent（每台 build 机器）、BuildGraph 脚本（XML 定义流水线）。UE 5.7 的架构长这样：
 
 {% mermaid %}
 graph TD
@@ -152,7 +152,7 @@ BuildGraph 脚本是这套系统的灵魂。一个合格的模板大概是这样
 
 Shader 和 Cook 占了整体时间的大头，但它们很难跨机器分发。Shader 编译依赖于 GPU 和 DDC（派生数据缓存），Cook 受限于资产依赖图的复杂性。
 
-**花 50 万买 build 机器集群，不如花 5 万优化 DDC 策略。** 具体做法：部署 Zen Server（UE 5.4+ 推荐），所有 Agent 直连同一个 Zen 实例，DDC 命中率从 40% 提到 90% 以上，Cook 时间直接腰斩。
+**花 50 万买 build 机器集群，不如花 5 万优化 DDC 策略。** 具体做法：部署 Zen Server（UE 5.7 内置、默认 DDC 后端），所有 Agent 直连同一个 Zen 实例，DDC 命中率从 40% 提到 90% 以上，Cook 时间直接腰斩。详见 [UE5.7 DDC 最佳实践](/posts/UE5.7-DDC-最佳实践/)。
 
 ## 决策框架
 
