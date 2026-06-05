@@ -1,5 +1,5 @@
 ---
-title: "Boss 多阶段战斗：用两层状态机做 AI 节奏"
+title: "Boss 多阶段战斗：两层状态机的设计"
 date: 2026-06-03 16:30:00
 tags:
   - Godot
