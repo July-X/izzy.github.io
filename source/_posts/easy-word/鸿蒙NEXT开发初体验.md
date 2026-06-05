@@ -1,5 +1,5 @@
 ---
-title: "鸿蒙 NEXT 原生开发初体验：ArkTS + ArkUI 的坑与收获"
+title: "鸿蒙 NEXT 原生开发初体验：ArkTS + ArkUI 的实践经验"
 date: 2026-06-04 12:00:00
 tags:
   - 鸿蒙
