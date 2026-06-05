@@ -1,5 +1,5 @@
 ---
-title: Battle Scheduler：从单机瓶颈到百万战斗的调度进化
+title: 被运维同事吐槽OOM后，我把战斗调度器重构了
 date: 2026-06-04 10:00:00
 tags:
   - slg-go
@@ -13,18 +13,18 @@ top_img: false
 
 <!-- more -->
 
-## 一次线上事故引发的重构
+## 事故现场：goroutine爆炸
 
 凌晨3点收到告警：战斗队列堆积超过5000，玩家等待时间从200ms飙升到8秒。排查发现，上一版的战斗调度器是简单的goroutine-per-request模式——每个战斗请求都创建一个新goroutine，没有上限控制。
 
-**直接后果**：
+直接后果：
 1. 高峰期goroutine数突破10万，内存占用暴涨
 2. Lua VM没有复用，每次战斗都要重新加载脚本
 3. 同一战斗重复提交时，多个goroutine同时执行，结果不一致
 
 “再这么下去，服务器迟早要OOM。”——来自运维同事的真实吐槽。
 
-## Worker Pool：有限资源下的流量控制
+## 为什么选channel做任务队列
 
 重构的核心是引入Worker Pool。先看调度器的基础结构：
 
@@ -43,7 +43,7 @@ type Scheduler struct {
 }
 ```
 
-**关键设计决策**：为什么用channel而不是更复杂的任务队列？
+为什么用channel而不是更复杂的任务队列？
 
 我们当时讨论了三个方案：
 
@@ -62,7 +62,7 @@ defaultIdempotencyTTL   = 2min
 
 **为什么预留200个槽位？** 这是为了给`SubmitAndWait`（同步等待结果的请求）留出通道。普通请求在队列剩余容量小于200时会被拒绝，返回`ErrBattleOverloaded`。
 
-## 幂等去重：同一战斗的并发控制
+## 前端抖动导致的双倍结果
 
 线上曾出现过这种情况：前端网络抖动，同一个战斗请求被点击了两次。结果两个goroutine同时执行，产生了两个不同的战斗结果，玩家困惑不已。
 
@@ -79,7 +79,7 @@ type battleState struct {
 }
 ```
 
-**处理流程**：
+流程很简单：
 1. 提交战斗时，先检查`states`中是否已有相同的`battleID`
 2. 如果有，直接加入`waiters`列表，等待第一个执行完成
 3. 如果没有，创建新的`battleState`，开始执行
@@ -90,11 +90,11 @@ type battleState struct {
 // 验证：resources=0, upgrades=空, prestige_level=3
 ```
 
-## 脚本热更：无锁读取 + 原子替换
+## 脚本热更：不宕机换代码
 
 战斗脚本需要在线更新，但不能停止服务。我们设计了三层机制：
 
-**1. ScriptManager结构**：
+先看ScriptManager结构：
 ```go
 type ScriptManager struct {
     snapshot atomic.Pointer[ScriptSnapshot]  // 无锁读当前脚本快照
@@ -103,13 +103,13 @@ type ScriptManager struct {
 }
 ```
 
-**2. 热更流程**：
+热更流程：
 - 加载新脚本目录
 - 语法校验（只编译不执行）
 - 原子替换`snapshot`指针
 - 重建VM池（旧VM由GC回收）
 
-**3. 战斗时的Lua优先策略**：
+战斗时的Lua优先策略：
 ```go
 func (e *BattleEngine) calcDamage(...) float64 {
     if damage, ok := e.lua.calcDamageViaLua(attacker, defender, 0); ok {
@@ -121,7 +121,7 @@ func (e *BattleEngine) calcDamage(...) float64 {
 
 这保证了：即使新脚本有bug，系统仍能降级到Go原生计算。
 
-## 战斗结果回调：事件驱动架构
+## 结果怎么通知下游服务
 
 战斗完成后，结果需要通知给Logic服务（更新玩家数据）和数据服务（记录战斗日志）。我们采用了事件发布模式：
 
@@ -137,7 +137,7 @@ type Publisher interface {
 2. **MemoryPublisher**：内存事件总线，用于测试
 3. **NoopPublisher**：禁用事件发布
 
-**战斗结果事件结构**：
+战斗结果事件结构：
 ```go
 type BattleResultEvent struct {
     EventType       string           // "battle.result.v1"
@@ -156,7 +156,7 @@ type BattleResultEvent struct {
 }
 ```
 
-## 性能数据：重构前后的对比
+## 效果怎么样
 
 重构后，在4核8G的机器上做了压测：
 
@@ -167,7 +167,7 @@ type BattleResultEvent struct {
 | 内存占用 | 2GB+（高峰） | 300MB | 87% |
 | 同一战斗去重 | 无 | 100% | 一致性 |
 
-## 架构总览
+## 整体结构
 
 ```mermaid
 graph TB
@@ -182,7 +182,7 @@ graph TB
     LuaSM --> Pool[sync.Pool]
 ```
 
-## 写在最后
+## 新问题
 
 现在的调度器已经稳定运行了3个月，日均处理战斗请求超过500万次。但新的问题又出现了：当某个战斗脚本执行时间过长时，会阻塞整个Worker，导致其他战斗排队。
 
