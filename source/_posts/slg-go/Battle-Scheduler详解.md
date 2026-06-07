@@ -17,7 +17,6 @@ top_img: false
 
 凌晨3点收到告警：战斗队列堆积超过5000，玩家等待时间从200ms飙升到8秒。排查发现，上一版的战斗调度器是简单的goroutine-per-request模式——每个战斗请求都创建一个新goroutine，没有上限控制。
 
-直接后果：
 1. 高峰期goroutine数突破10万，内存占用暴涨
 2. Lua VM没有复用，每次战斗都要重新加载脚本
 3. 同一战斗重复提交时，多个goroutine同时执行，结果不一致
@@ -26,7 +25,7 @@ top_img: false
 
 ## 为什么选channel做任务队列
 
-重构的核心是引入Worker Pool。先看调度器的基础结构：
+第一件事是加 Worker Pool。调度器的基础结构：
 
 ```go
 type Scheduler struct {
@@ -60,7 +59,7 @@ defaultExecuteTimeout   = 30s
 defaultIdempotencyTTL   = 2min
 ```
 
-**为什么预留200个槽位？** 这是为了给`SubmitAndWait`（同步等待结果的请求）留出通道。普通请求在队列剩余容量小于200时会被拒绝，返回`ErrBattleOverloaded`。
+预留 200 个槽位的原因： 这是为了给`SubmitAndWait`（同步等待结果的请求）留出通道。普通请求在队列剩余容量小于200时会被拒绝，返回`ErrBattleOverloaded`。
 
 ## 前端抖动导致的双倍结果
 
@@ -186,4 +185,4 @@ graph TB
 
 现在的调度器已经稳定运行了3个月，日均处理战斗请求超过500万次。但新的问题又出现了：当某个战斗脚本执行时间过长时，会阻塞整个Worker，导致其他战斗排队。
 
-我们正在考虑引入“战斗沙箱”——为每个Lua VM设置独立的资源限制（CPU时间、内存）。你觉得这个方向对吗？或者有没有更优雅的解决方案？
+我们正在评估给每个 Lua VM 加资源限制。CPU 时间和内存的硬上限，超限后降级到 Go 原生计算。阈值设多少还在调，先从 2 秒 CPU 时间、256MB 内存起步。

@@ -13,11 +13,7 @@ top_img: false
 
 <!-- more -->
 
-## 引言
-
-easy-word 是一个鸿蒙 NEXT 原生的单词学习应用，UI 层全部用 ArkUI 声明式语法实现。项目拆出了 15 个以上的自定义 `@Component`，每个组件职责单一。
-
-这篇文章聚焦三个核心组件的设计：翻转闪卡、GitHub 风格热力图、浮动宠物。它们分别展示了 ArkUI 中状态管理、数据驱动渲染、手势动画的典型用法。
+easy-word 是鸿蒙 NEXT 原生的单词学习应用，UI 全部用 ArkUI 声明式语法写。项目拆了 15 个以上的 `@Component`，每个只管一件事。这篇挑三个说说：翻转闪卡、热力图、浮动宠物。
 
 ## 翻转闪卡：三层状态管理
 
@@ -274,11 +270,6 @@ easy-word 拆出了 15+ 个自定义组件，按职责划分：
 
 ## 设计总结
 
-这三个组件展示了 ArkUI 自定义组件的几个关键模式：
+写下来发现一个规律：ArkUI 的状态管理就是分三层。`@StorageLink` 管全局主题这种东西，`@Prop` 管父组件传进来的数据，`@State` 管组件自己的状态。数据变了靠 `@Watch` 自动触发重算，不用手动通知。
 
-1. **状态分层**：`@StorageLink` 管全局、`@Prop` 管外部输入、`@State` 管内部状态，职责清晰
-2. **数据驱动**：`@Watch` 监听数据变化自动触发重算，避免手动管理更新
-3. **声明式渲染**：用 `ForEach` 和 `if/else` 替代命令式 DOM 操作
-4. **手势组合**：`GestureGroup(Sequence, ...)` 组合多种手势，避免冲突
-
-ArkUI 的声明式语法和 SwiftUI、Jetpack Compose 思路一致。如果你有这两个框架的经验，上手 ArkUI 的学习曲线会比较平缓。你觉得 ArkUI 相比 SwiftUI 或 Compose，在游戏化 UI 场景下有哪些独特的优势或不足？
+手势交互用 `GestureGroup(Sequence, ...)` 把长按和拖拽串起来，避免冲突。声明式渲染和 SwiftUI、Jetpack Compose 一个路子，用 `ForEach` 和 `if/else` 替代命令式操作。有这两个框架经验的话，上手 ArkUI 不难。
