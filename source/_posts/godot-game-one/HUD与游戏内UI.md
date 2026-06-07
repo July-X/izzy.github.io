@@ -56,7 +56,7 @@ theme_override_styles/fill = Color(0.6, 0.1, 0.6, 1)  # 亮紫
 
 初始化时设置最大值，每帧同步当前血量：
 
-```gdscript
+```python
 # scripts/boss.gd
 if _health_bar:
     _health_bar.max_value = _max_health
@@ -71,7 +71,7 @@ if _label:
 
 HUD 层在屏幕顶部居中显示一个固定位置的状态条，包含百分比和阶段名：
 
-```gdscript
+```python
 # scripts/hud.gd
 func show_boss_status(current: float, maximum: float, phase_name: String) -> void:
     _ensure_boss_status_ui()
@@ -84,7 +84,7 @@ func show_boss_status(current: float, maximum: float, phase_name: String) -> voi
 
 状态条是动态创建的：
 
-```gdscript
+```python
 func _ensure_boss_status_ui() -> void:
     _boss_status_root = Control.new()
     _boss_status_root.position = Vector2(
@@ -96,7 +96,7 @@ func _ensure_boss_status_ui() -> void:
 
 Boss 有三个阶段，每个阶段有独立名称：
 
-```gdscript
+```python
 func get_phase_name() -> String:
     match _phase:
         BossPhase.SUPPRESSION: return "压制校准"
@@ -112,7 +112,7 @@ func get_phase_name() -> String:
 
 分数通过信号驱动更新：
 
-```gdscript
+```python
 # scripts/hud.gd
 func _on_score_changed(new_score: int) -> void:
     _update_score(new_score)
@@ -124,7 +124,7 @@ func _update_score(score: int) -> void:
 
 HUD 每帧检查分数变化，避免不必要的重绘：
 
-```gdscript
+```python
 func _refresh_score_if_needed() -> void:
     var current_score: int = GameState.score
     if current_score != _cached_score:
@@ -135,7 +135,7 @@ func _refresh_score_if_needed() -> void:
 
 多人模式下，分数按存活人数均分。HUD 用竖线分隔显示每个玩家的分数：
 
-```gdscript
+```python
 func _update_player_scores(scores: Dictionary, total_score: int) -> void:
     var rows: Array[String] = []
     for key in keys:
@@ -150,7 +150,7 @@ func _update_player_scores(scores: Dictionary, total_score: int) -> void:
 
 升级道具拾取后，属性条有 Tween 动画反馈：
 
-```gdscript
+```python
 func _animate_powerup_row(row, bg, fill, val_lbl, prev_fill_w, fill_w, bar_h, bar_color):
     # 缩放弹跳：0.98 → 1.0
     row_tween.tween_property(row, "scale", Vector2(1, 1), 0.18)
@@ -170,7 +170,7 @@ func _animate_powerup_row(row, bg, fill, val_lbl, prev_fill_w, fill_w, bar_h, ba
 
 ENet 的 peer_id 不固定，项目限制 1 个 Client，所以 UI 层按角色槽位显示：
 
-```gdscript
+```python
 func _peer_label(peer_id: int) -> String:
     if peer_id == 1:
         return "P1"
@@ -181,7 +181,7 @@ func _peer_label(peer_id: int) -> String:
 
 每个玩家节点的 `multiplayer_authority` 设为该玩家的 peer_id：
 
-```gdscript
+```python
 # scripts/player.gd
 var peer_id: int = 1
 
@@ -195,7 +195,7 @@ func _init_multiplayer() -> void:
 
 HUD 需要区分当前本地玩家和远程玩家：
 
-```gdscript
+```python
 func _resolve_local_player() -> Node:
     for p in get_tree().get_nodes_in_group("player"):
         if not NetworkManager.is_online():
@@ -215,7 +215,7 @@ func _resolve_local_player() -> Node:
 
 等级提升和 Boss 出现时显示全屏横幅：
 
-```gdscript
+```python
 func show_center_banner(text: String, hold: float = 2.0, color: Color = ...):
     # 淡入 → 保持 → 淡出 → queue_free
     tween.tween_property(banner, "modulate:a", 1.0, 0.18)
@@ -227,7 +227,7 @@ func show_center_banner(text: String, hold: float = 2.0, color: Color = ...):
 
 玩家受伤时全屏红色闪烁：
 
-```gdscript
+```python
 func _setup_damage_flash() -> void:
     _damage_flash = ColorRect.new()
     _damage_flash.z_index = 200  # 覆盖全屏
@@ -242,7 +242,7 @@ func _setup_damage_flash() -> void:
 
 技能图标上有半透明暗色遮罩，冷却完成时变为全透明：
 
-```gdscript
+```python
 # scripts/cooldown_overlay.gd
 func set_ready_progress(value: float) -> void:
     _progress = clamp(value, 0.0, 1.0)
@@ -253,7 +253,7 @@ func set_ready_progress(value: float) -> void:
 
 技能栏在右下角定位，移动端和桌面端有不同的边距：
 
-```gdscript
+```python
 const SKILL_SLOT_DESKTOP: Vector2 = Vector2(144, 144)
 const SKILL_SLOT_MOBILE: Vector2 = Vector2(116, 116)
 const SKILL_BAR_MOBILE_MARGIN: Vector2 = Vector2(30, 38)
@@ -274,7 +274,7 @@ func _layout_skill_bar() -> void:
 
 右侧排行榜实时显示分数排名和历史记录：
 
-```gdscript
+```python
 func _refresh_leaderboard() -> void:
     label.text = "#%d  %s : %d" % [i + 1, _peer_label(int(row.peer_id)), int(row.score)]
     history.text = "历史 %s  总分:%d  %s  Lv.%d" % [
