@@ -1,6 +1,6 @@
 ---
 title: "tts-tool 的 WAV 编码与格式转换：手写 RIFF Header 的实践"
-date: 2026-06-06 15:00:00
+date: 2026-06-08 15:00:00
 tags:
   - Electron
   - TTS
