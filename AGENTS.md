@@ -91,6 +91,44 @@ source/_posts/
 - 风格：问答式，每篇聚焦一个主题，10 个左右问题
 - 文件命名：`go-NN-主题.md`（NN 为序号，从 01 开始）
 
+## 图片协作机制
+
+博客需要截图来增强直观性。图片由用户手动截图，Agent 负责提出需求和插入引用。
+
+### 目录结构
+
+```
+source/images/
+├── mingmo-server-go/
+├── easy-word/
+├── slg-go/
+├── godot-game-one/
+├── tts-tool/
+├── game-bass/
+├── golang/
+├── electron/
+├── UE5/
+└── ...
+```
+
+规则：`source/images/<项目名>/` 下按文件名自由命名，Agent 在博客里引用。
+
+### 协作流程
+
+1. **Agent 写博客时**，在需要图片的位置标注占位符，同时告诉用户：
+   - 存放路径：`source/images/<项目名>/<文件名>.png`
+   - 截图要求：截什么、关注什么区域
+2. **用户截图后**，把文件放到指定路径
+3. **Agent 再执行**，把占位符替换为正式的图片引用
+
+### Hexo 图片引用语法
+
+```markdown
+![alt 文字](/images/<项目名>/<文件名>.png)
+```
+
+---
+
 ## Git 工作流
 
 1. 所有博文变更在本地提交（`git add` + `git commit`）
